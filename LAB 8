@@ -1,0 +1,118 @@
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include<string>
+using namespace std;
+
+//holds info about the Masterstring and the slavestring
+class Strings
+{
+    public:
+    
+    int numslavestrings;
+    string Mainstring;
+    string *slavestring;
+   
+    //parameterised constructor
+    Strings(int n,string s)
+    {
+        numslavestrings=n;
+        slavestring=new string[n];
+        Mainstring=s;
+        if(s=="\0")
+        {
+            for(int i=0;i<n;i++)
+                cout<<0<<endl;
+        }
+
+        for(int i=0; i<numslavestrings; i++)
+        {
+            slavestring[i]="\\";
+        }        
+    }
+    
+    bool fittingin(string T, int in);
+    int Bincall(string T, int low, int high);    
+};
+ 
+//checks if T(in) is a substring of the Mainstring
+bool Strings::fittingin(string T,int in)
+{
+    string s;
+    for(int i=0;i<T.length();i++)
+    {
+        for(int j=0;j<in;j++)
+        {
+            s=s+T[i];
+        }
+    }
+    
+    int i=0,j=0;
+    
+    while(i<Mainstring.length())
+    {
+        if(Mainstring[i]==s[j])
+            j++;
+        if(j>=s.length())
+            return true;
+        i++;
+    }
+    return false;
+}
+
+//Function does a recursive call on the passed slavestring's T(in)'s to find and return the required Imax
+int Strings::Bincall(string T,int low, int high)
+    {
+        if(high-low==1)
+            return low;
+        int mid=(high+low)/2;
+        if(fittingin(T,mid))
+        {
+            return Bincall(T,mid,high);
+        }
+        else
+        {
+            return Bincall(T,low,mid);
+        }
+    }
+
+int main()
+{
+    int X;
+    cin>>X;
+    
+    int i=X;
+    
+    //input for Mainstring
+    string S;
+    cin>>S;
+    
+    Strings str(X,S);
+   
+    //input for slavestrings
+    while(i>0)
+    {
+        cin>>str.slavestring[X-i];
+        i--; 
+    }
+    int n=str.Mainstring.length();
+    i=0;
+    
+    while(i!=X)
+    {   
+        int m=str.slavestring[i].length(); 
+             if(m==0)
+            {
+                cout<<0<<endl;
+            }
+
+        if(str.fittingin(str.slavestring[i],(n/m)))
+            cout<<(n/m)<<endl;
+        else
+            cout<<str.Bincall(str.slavestring[i],0,(n/m))<<endl;  
+        i++;
+    }   
+    return 0;
+}
